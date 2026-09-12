@@ -235,9 +235,9 @@ process tokens that did not need to exist. The order is not a preference: contex
 multiplicative with everything the runtime does afterwards, and nothing the runtime does afterwards
 reduces the token count.
 
-**Expect a dozen cuts, not one.** 150k to 10k was identity and formatting instructions, memory
-policy, event rules, signal selectors, the history policy and the tool catalogue — the largest of
-them worth about 35k and the rest a few thousand each.
+**Expect a dozen cuts, not one.** The reduction came from half a dozen unrelated places, none of
+them dramatic, and the largest was about a third of it. Looking for the single big win would have
+found nothing.
 
 **Measure what is in the prompt before assuming it is the conversation.** In the prompt measured
 here it was 95% schemas and 5% conversation, and no instrument on the box reported that. A turn's
@@ -247,16 +247,15 @@ token count is visible; its composition is not, and only the composition tells y
 charged on every round of every turn from then on, whether or not anything calls it. Connecting is
 cheap and reversible; the bill is neither.
 
-**Declare the tools that get used and reach the rest through a lookup.** A hundred and sixteen of a
-hundred and fifty-three declared tools were never called. Twenty cover nine sessions in ten, and
-the tenth pays about a tenth of a round to find what it needs.
+**Declare the tools that get used and reach the rest through a lookup.** Most of a declared
+catalogue is never called, and what is called concentrates hard. A small hot set with a lookup
+behind it covers nearly every session and costs a fraction of a round on the rare miss.
 
 **Time to first token is the number a person feels, and it is the one that runs away.** Over the
 same context range decode loses half its rate while the wait before anything appears gets more than
 fifty times worse. Tokens per second is the figure everyone quotes and the milder of the two.
 
 **Pick the budget from the workload, not from the model.** Ten thousand tokens is what fits inside
-one reporting interval on this hardware — that is the whole derivation. The automated half of the
-workload has no reporting interval and lands on the same discipline for a different reason, because
-its turns share a runtime with the watched ones. A different machine, or an interface that could
-show progress during prefill, would move the number. The model has nothing to do with it.
+one reporting interval on this hardware, and the automated half of the workload lands on the same
+number for its own reason. Change the machine or the interface and the number moves. The model has
+nothing to do with it.
