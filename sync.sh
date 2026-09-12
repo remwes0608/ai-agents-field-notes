@@ -6,8 +6,8 @@
 #   ./sync.sh ../<private-repo>/blog/2026-09-10-dgx-spark-performance.md \
 #             "Six configuration changes, each measured the same way"
 set -e
-SRC="$1"; SUBTITLE="$2"
-[ -f "$SRC" ] || { echo "usage: $0 <article.md> [subtitle]"; exit 1; }
+SRC="$1"; SUBTITLE="$2"; DESCRIPTION="$3"
+[ -f "$SRC" ] || { echo "usage: $0 <article.md> [subtitle] [description]"; exit 1; }
 BASE=$(basename "$SRC")
 DST="_posts/$BASE"
 TITLE=$(sed -n 's/^# //p' "$SRC" | head -1)
@@ -16,6 +16,9 @@ esc() { printf '%s' "$1" | sed 's/"/\\"/g'; }
   printf -- '---\n'
   printf 'title: "%s"\n' "$(esc "$TITLE")"
   [ -n "$SUBTITLE" ] && printf 'subtitle: "%s"\n' "$(esc "$SUBTITLE")"
+  # The meta description search engines show. Without it `head.html` falls back to the excerpt,
+  # which is the hook — good prose, but it carries whatever terms the hook happened to use.
+  [ -n "$DESCRIPTION" ] && printf 'description: "%s"\n' "$(esc "$DESCRIPTION")"
   printf 'background: "/img/bg-post.svg"\n'
   printf -- '---\n\n'
   # Strip the H1, then rewrite links so they resolve against the site rather

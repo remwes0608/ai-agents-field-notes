@@ -1,6 +1,7 @@
 ---
 title: "Tuning a 26B MoE agent on a DGX Spark to over 100 t/s"
 subtitle: "Six configuration changes, each measured the same way"
+description: "Tuning llama.cpp on an NVIDIA DGX Spark (GB10, Grace-Blackwell): six measured changes taking a 26B sparse MoE agent from 45 to over 100 tokens per second."
 background: "/img/bg-post.svg"
 ---
 

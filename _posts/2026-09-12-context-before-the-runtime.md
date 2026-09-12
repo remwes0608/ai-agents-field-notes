@@ -1,6 +1,7 @@
 ---
 title: "Cutting an agent's turn from 150k to 10k tokens"
 subtitle: "Where the tokens were hiding, and why it came before the tuning"
+description: "Cutting an LLM agent's context from 150k to 10k tokens on an NVIDIA DGX Spark (GB10): where the tokens were, what it cost, and why it came before tuning llama.cpp."
 background: "/img/bg-post.svg"
 ---
 
@@ -20,9 +21,10 @@ This is the half that came first. The runtime tuning that followed is
 [a separate article]({{ site.baseurl }}/posts/dgx-spark-performance/), and cutting the context was worth more
 than all six of its stages on the number a person actually feels.
 
-The machine and the workload are [on the About page]({{ site.baseurl }}/about/). What matters here is the ratio: a
-turn reads **9–17 prompt tokens for every token it generates**. Expect different absolute numbers on
-other hardware — the shape is what transfers.
+Everything below runs on an **NVIDIA DGX Spark (GB10)** serving a 35B sparse MoE through llama.cpp;
+the machine and the workload are [on the About page]({{ site.baseurl }}/about/). What matters for this article is the
+ratio: a turn reads **9–17 prompt tokens for every token it generates**. Expect different absolute
+numbers on other hardware — the shape is what transfers.
 
 ---
 
