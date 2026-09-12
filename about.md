@@ -78,7 +78,8 @@ latency-sensitive in a way a batch job is not. Everything below follows from it.
 The agent idea started about a year ago, around **autonomous 5G Core**. The first promising open
 source initiatives were appearing, and my team and I were finishing a round of cloud-native
 optimisation work. The natural next step was full autonomy — self-operating software, deployable
-into any Kubernetes cluster.
+into any Kubernetes cluster. The chance to build any of it came later, at the beginning of this
+year.
 
 **Kubernetes cluster management automation was the first quick win.** Once we started looking, we
 found useful events arriving from everywhere: CI/CD pipelines, Kubernetes events, eBPF. Each was
