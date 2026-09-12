@@ -128,11 +128,11 @@ the three numbers come in.
 `llama-server` at `-lv 3` reports three throughput numbers per request. They answer different
 questions, and treating them as interchangeable produces wrong conclusions.
 
-| metric | what it is | the question it answers |
-| --- | --- | --- |
-| **prompt eval t/s** | prefill — ingesting the prompt | how long before the first token appears |
-| **eval time t/s** | decode, averaged over one whole generation, reported at the end | which configuration is faster |
-| **n_gen `tg` / `tg_3s`** | decode sampled *during* generation; `tg` running, `tg_3s` a trailing 3-second window | what streaming actually feels like |
+| metric | the question it answers |
+| --- | --- |
+| **prompt eval t/s** | How long before the first token appears.<br>*Prefill — ingesting the prompt.* |
+| **eval time t/s** | Which configuration is faster.<br>*Decode, averaged over one whole generation, reported at the end.* |
+| **n_gen `tg` / `tg_3s`** | What streaming actually feels like.<br>*Decode sampled during generation; `tg` running, `tg_3s` a trailing 3-second window.* |
 
 Each has a trap.
 

@@ -117,3 +117,15 @@ header.masthead .site-heading {
 .ai-note strong {
 	color: #45474b;
 }
+
+/* An italic run inside a table cell is a metric's definition sitting under the answer it belongs
+   to — see "Three numbers, three questions". Smaller and muted so the cell reads as one primary
+   line with a gloss beneath it, which is what lets that table live in two columns instead of
+   three and survive a narrow window. */
+td em {
+	display: inline-block;
+	margin-top: 0.2rem;
+	font-size: 0.86em;
+	line-height: 1.4;
+	color: #6c757d;
+}
