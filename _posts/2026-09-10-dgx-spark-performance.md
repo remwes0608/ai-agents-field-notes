@@ -878,84 +878,10 @@ would optimise.
 expert weights are where the money is, and it decides which quantization formats can help you at
 all: anything that compresses only the experts is optimising the part that is mostly asleep.
 
-**NVFP4 is the headline feature of this hardware and it cost 2.6× the bytes per token.** FP4 is a
-large part of why a GB10 looks attractive on paper. On this model the GGUF header disposes of it
-without running anything:
-
-| | Q4_0 (in production) | NVFP4 build |
-| --- | --- | --- |
-| file total | 13.26 GiB | 16.45 GiB |
-| experts (sparse) | 11.96 | **11.96** |
-| attention (always) | 0.58 | 2.07 |
-| embeddings/output | 0.39 | 1.38 |
-| dense ffn (always) | 0.32 | 1.04 |
-| **per forward pass** | **2.04 GiB** | **5.23 GiB** |
-
-Two things go wrong at once. The expert tensors come out byte-for-byte identical, because NVFP4
-lands at roughly the same 4.5 bits per parameter as Q4_0 — converting them buys nothing. And the
-always-active path is not converted at all: attention, embeddings and the dense FFN stay at BF16
-and more than triple. The always-active share goes from 63% to 86%, and the file ends up larger
-than the Q4_0 it replaces.
-
-Decode follows the bytes, as it must:
-
-| depth | Q4_0 | NVFP4 |
-| --- | --- | --- |
-| 0 | **~85** | **~40** |
-| 16,384 | ~65 | ~34 |
-
-*Both files, one `llama-bench` invocation, `tg128`, `q8_0` KV.*
-
-**Less than half the speed at zero context**, on a byte ratio of about 2.6× — so the bytes account
-for nearly all of it. The gap narrows at depth only because the KV term is the same for both files
-and grows to dominate.
-
-That is not a packager getting it wrong. NVIDIA's own release of this model lists `self_attn`,
-`mlp` and `router` in its `quantization_config.ignore` for **all thirty layers**, plus `lm_head`.
-The reference conversion excludes exactly the tensors a batch-1 decode reads on every token.
-
-**The search is where the time actually goes.** Benchmarking this took minutes; finding something
-worth benchmarking took days, and came back empty. The running note at the top of my
-`start-llm.sh` is the entire search, five models deep and in the order they were tried:
-
-```
-#MODEL_NAME=CISCai/gemma-4-31B-it-NVFP4-turbo-GGUF      ## Ultra slow 2 tok/s
-#MODEL_NAME=catlilface/Gemma-4-26B-A4B-NVFP4-GGUF       ## Slow 30 tok/s
-# MODEL_NAME=unsloth/gemma-4-26B-A4B-it-GGUF:MXFP4_MOE  ## fair enough, 46 tok/s
-# MODEL_NAME=unsloth/gpt-oss-20b-GGUF:UD-Q4_K_XL        ## fast 70 t/s
-MODEL_NAME=google/gemma-4-26B-A4B-it-qat-q4_0-gguf:Q4_0 ## good 60 t/s
-```
-
-*Informal notes from live use rather than `llama-bench`, but the ordering never changed under
-measurement.*
-
-Both FP4 builds sit at the top and both were rejected on speed. The MXFP4 build is where this
-article's 45 t/s starting point comes from. The 20B model is the fastest row and is not
-the one running: at that size the answers were not good enough for the agent, whatever the rate —
-which is this article's conclusion arriving early, and from a direction I was not looking in. And
-plain `Q4_0`, the format with no marketing attached to it, beat every quantization that had some.
-
-The two NVFP4 GGUFs of this model on Hugging Face, from different packagers, are the same file to
-the byte — 17,675,619,776 of them — so there is one conversion in circulation, not two opinions
-about how to do it. The builds that do quantize the hot path are not GGUFs at all. And a build
-advertising QAT-preserving NVFP4 turns out to keep the Q4_0 weights and apply NVFP4 to norms and
-biases, landing within a hundred bytes of the file it claims to improve on. Thirty seconds of
-header parsing — `active.py` reads a GGUF you have not downloaded yet — would have ended every one
-of those searches before the download started.
-
-The one place NVFP4 seems to arrive whole is NVIDIA's own stack: the reference release ships in the
-compressed-tensors layout that vLLM and TensorRT consume, not as a GGUF. In the open format it
-reaches the part of the model that was already cheap.
-
-**Scope that narrowly, though.** What was tested here is batch-1 decode on sparse MoEs through
-llama.cpp, which is what an agent does — one stream, one token at a time, every always-active
-weight read on each of them. A dense model reads every weight every token, so the same format
-lands somewhere quite different. Batched serving, where arithmetic starts to matter as much as
-bandwidth, and training on this box are different workloads again, and neither was measured here.
-
-So the claim is the narrow one: a capability on the spec sheet is only yours if it reaches the
-path your workload actually reads, and for this workload FP4 reached none of it and charged 2.6×
-the bytes for the privilege.
+**A headline feature can be worth nothing to you.** NVFP4 is a large part of why a GB10 looks
+attractive on paper, and it was one of the reasons I chose this box. For this workload it reached
+none of the path a token actually reads — a capability on a spec sheet is only yours if it lands
+where your workload spends its bytes.
 
 **KV quantization buys context length, not speed — and on some architectures it costs dearly.**
 Gemma gives up 49.5% at 64k for a quantized cache and GLM 75%, while Qwen gives up nothing. What

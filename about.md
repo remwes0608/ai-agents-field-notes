@@ -160,9 +160,8 @@ worth more than a round it finishes quickly. The turns feel faster because there
 
 ## Code and scripts
 
-Every script and snippet these articles measure with is published in the
-[repository](https://github.com/remwes0608/ai-agents-field-notes/tree/main/scripts), under the name the
-text calls it by.
+The diagnostic scripts these articles were measured with are published in the
+[repository](https://github.com/remwes0608/ai-agents-field-notes/tree/main/scripts).
 
 ## Licence
 

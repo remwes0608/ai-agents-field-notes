@@ -14,7 +14,10 @@ permalink: /posts/
       {% if post.subtitle %}<h3 class="post-subtitle">{{ post.subtitle }}</h3>{% endif %}
     </a>
     <p class="post-meta">
-      {{ post.date | date: "%B %-d, %Y" }} &middot; {{ post.content | number_of_words | divided_by: 200 | plus: 1 }} min read
+      {% comment %} The theme's own include, not a second formula: the home page uses it too, and
+      two estimates of the same article disagreeing is the kind of detail a reader notices.
+      {% endcomment %}
+      {{ post.date | date: "%B %-d, %Y" }} &middot; {% include read_time.html content=post.content %}
     </p>
     <hr>
   </div>
