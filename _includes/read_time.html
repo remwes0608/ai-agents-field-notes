@@ -2,21 +2,23 @@
 Local override of the theme's read_time.html. The base figure is the theme's own — words over 135 —
 but it is shown on a ladder rather than to the minute. A reading time is derived from an assumed
 words-per-minute, and every reader's own rate differs, so "62 mins" claims a resolution the estimate
-does not have. Floored, like every other floor on this site: finishing early is a pleasant surprise,
-running over is not.
+does not have.
 
   under 15 minutes    5, 10, 15
   15 and over         15, 30, 45, 60, ...
 
-`divided_by` on integers is integer division, which is the floor.
+Nearest step, half up, and deliberately not floored: a floor shows 29 minutes as 15, which misleads
+in the direction that costs the reader something. `divided_by` on integers is integer division, so
+adding half a step before dividing is what rounds rather than truncates.
 {%- endcomment -%}
 {%- assign words = include.content | number_of_words -%}
 {%- assign mins = words | divided_by: 135 -%}
-{%- if mins < 5 -%}
-  {%- assign shown = 5 -%}
-{%- elsif mins < 15 -%}
-  {%- assign shown = mins | divided_by: 5 | times: 5 -%}
+{%- if mins < 15 -%}
+  {%- assign bumped = mins | plus: 2 -%}
+  {%- assign shown = bumped | divided_by: 5 | times: 5 -%}
 {%- else -%}
-  {%- assign shown = mins | divided_by: 15 | times: 15 -%}
+  {%- assign bumped = mins | plus: 7 -%}
+  {%- assign shown = bumped | divided_by: 15 | times: 15 -%}
 {%- endif -%}
+{%- if shown == 0 -%}{%- assign shown = 5 -%}{%- endif -%}
 <span class="reading-time" title="Estimated read time">{{ shown }} mins read</span>
