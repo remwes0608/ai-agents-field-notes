@@ -20,10 +20,9 @@ This is the half that came first. The runtime tuning that followed is
 [a separate article]({{ site.baseurl }}/posts/dgx-spark-performance/), and cutting the context was worth more
 than all six of its stages on the number a person actually feels.
 
-The machine throughout is an NVIDIA DGX Spark (GB10) running a 35B sparse MoE through llama.cpp.
-The workload is an infrastructure agent: multi-round tool-calling turns, a person watching, **9–17
-prompt tokens read for every token generated**. Expect different absolute numbers on other
-hardware. The shape is what transfers.
+The machine and the workload are [on the About page]({{ site.baseurl }}/about/). What matters here is the ratio: a
+turn reads **9–17 prompt tokens for every token it generates**. Expect different absolute numbers on
+other hardware — the shape is what transfers.
 
 ---
 

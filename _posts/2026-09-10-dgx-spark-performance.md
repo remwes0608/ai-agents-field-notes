@@ -7,10 +7,9 @@ background: "/img/bg-post.svg"
 **How much can you get out of a DGX Spark before deciding it is not enough to run an agent on —
 and why chasing tokens per second should not always be the goal?**
 
-The box is an **NVIDIA DGX Spark (GB10)**: 128 GB of unified memory at up to 273 GB/s, no separate
-VRAM, which makes bandwidth the only constraint that matters. The workload is an infrastructure
-agent — multi-round tool-calling turns, latency-sensitive, reading **9–17 prompt tokens for every
-token generated**.
+The machine and the workload are [on the About page]({{ site.baseurl }}/about/): a DGX Spark (GB10) with 128 GB of
+unified memory and no separate VRAM, serving an infrastructure agent. **Bandwidth is the only
+constraint that matters here**, and every number below is downstream of it.
 
 It started at roughly **45 t/s**. It now streams **over 100 t/s** on the turns that make up most of
 the work, spikes to **138 t/s** on a single prompt, and reaches roughly **280 t/s** in aggregate
