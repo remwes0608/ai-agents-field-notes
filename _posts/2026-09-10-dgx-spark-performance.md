@@ -464,6 +464,14 @@ llama-server \
 100,000 — and the largest real turn observed here was 90,959 tokens. `-c 400000` keeps 200,192 per
 slot.
 
+That split is a default, not a property of `-c`: **`-kvu` (`--kv-unified`) pools the slots into one
+shared buffer**, and a single sequence can then reach all of `-c` instead of its slice. It is the
+right lever on a server with one caller, and the wrong one here. Reserved slices are what make two
+entry paths independent — share the pool and one deep turn can hold context the other stream was
+counting on, so the second request is refused for want of context that exists but is already spoken
+for. `-np 2` is bought for isolation; `-kvu` spends it. Sizing `-c` for the worst single turn and
+leaving the split alone costs only memory, which is the cheaper mistake.
+
 **Does an idle slot cost throughput?** Single-stream, second slot empty:
 
 | prompt | `-np 1` | `-np 2` | ratio |
