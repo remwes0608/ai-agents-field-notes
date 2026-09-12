@@ -12,7 +12,7 @@ whatever the hardware does, and it is the only one of the two factors you fully 
 touching the runtime I went after the tokens: context per turn came down from roughly **150k to
 roughly 10k**, with no loss in answer quality.
 
-No single change did that. It was a year of small cuts, and this article shows one of them in full
+No single change did that. It was a set of small cuts, and this article shows one of them in full
 — **about 35k tokens of tool schemas that almost nothing ever called** — because it is the one with
 a clean measurement and a simple fix. The shape of it repeats everywhere else.
 
