@@ -1,7 +1,7 @@
 ---
 title: "Cutting an agent's turn from 150k to 10k tokens"
 subtitle: "Where the tokens were hiding, and why it came before the tuning"
-description: "Cutting an LLM agent's context from 150k to 10k tokens to get the best user experience out of an NVIDIA DGX Spark (GB10)."
+description: "Cutting an LLM agent's context from 150k to 10k tokens to get the best user experience out of an NVIDIA DGX Spark."
 background: "/img/bg-post.svg"
 ---
 
