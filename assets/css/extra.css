@@ -1,0 +1,119 @@
+/* Clean Blog on Bootstrap 4 lets <pre> and <table> push the page sideways.
+   These articles have journal lines ~150 characters wide and 16 tables, so
+   each has to scroll inside its own box instead. */
+
+.post-container, article {
+  overflow-wrap: break-word;
+}
+
+article pre,
+.post-container pre {
+  overflow-x: auto;
+  white-space: pre;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  background: #f6f7f5;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-left: 3px solid #2E6B5E;
+  border-radius: 3px;
+  padding: 0.9rem 1rem;
+}
+
+article pre code,
+.post-container pre code {
+  font-size: inherit;
+  background: none;
+  padding: 0;
+}
+
+/* Tables: scroll in place, and read as data rather than prose. */
+article table,
+.post-container table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  width: 100%;
+  font-family: "Open Sans", system-ui, sans-serif;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+  border-collapse: collapse;
+  margin-bottom: 1.6rem;
+}
+
+article table th,
+.post-container table th {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  color: #6b736f;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+article table th,
+article table td,
+.post-container table th,
+.post-container table td {
+  padding: 0.45rem 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Nothing on the page may scroll the page itself sideways. */
+body { overflow-x: hidden; }
+
+/* The measure is tuned for prose; give the data a little more room. */
+@media (min-width: 992px) {
+  .post-container > .col-lg-8,
+  .post-container > .col-md-10 { flex: 0 0 83%; max-width: 83%; }
+}
+
+/* ---- Masthead height ------------------------------------------------- */
+/* The theme pads the hero 200px top and 150px bottom (200/200 above 768px).
+   At 1440x900 that made the header 726px tall; 30% off is 508, which is the
+   padding below. background-size stays `cover` so the artwork scales into the
+   shorter box without being squashed out of proportion. */
+
+header.masthead .page-heading,
+header.masthead .post-heading,
+header.masthead .site-heading {
+  padding: 91px 0 68px;
+}
+
+@media only screen and (min-width: 768px) {
+  header.masthead .page-heading,
+  header.masthead .post-heading,
+  header.masthead .site-heading {
+    padding: 91px 0;
+  }
+}
+
+/* The AI-assistance note in the footer. A light-grey aside: present on every page, small enough
+   that it never competes with the post it follows, and tinted just enough to read as an annotation
+   about the site rather than as content of it. */
+.ai-note {
+	max-width: 42rem;
+	margin: 0 auto 2.25rem;
+	padding: 0.85rem;
+	background: #f4f4f5;
+	border: 1px solid #e2e2e5;
+	border-radius: 6px;
+	color: #63656a;
+}
+
+.ai-note p {
+	font-size: 0.82rem;
+	line-height: 1.55;
+	/* The theme puts 30px above every <p>, which lands inside the box and makes the top padding read
+	   as three times the bottom one. Both ends are the box's own padding now. */
+	margin-top: 0;
+	margin-bottom: 0.6rem;
+	text-align: left;
+}
+
+.ai-note p:last-child {
+	margin-bottom: 0;
+}
+
+.ai-note strong {
+	color: #45474b;
+}

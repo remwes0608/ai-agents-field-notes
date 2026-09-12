@@ -1,0 +1,39 @@
+title:        AI Agents Field Notes
+description:  Inference tuning, context discipline, and the numbers behind both.
+author:       Remigiusz Weska
+
+# Where the site lands. For <user>.github.io/<repo>, url is the origin and
+# baseurl is "/<repo>"; for a user site or custom domain, empty the baseurl.
+url:          "https://remwes0608.github.io"
+baseurl:      "/ai-agents-field-notes"
+
+github_username: remwes0608
+
+# Footer social links; the theme builds https://www.linkedin.com/in/<slug>
+linkedin_username: remigiusz-weska-5683335
+
+remote_theme: StartBootstrap/startbootstrap-clean-blog-jekyll
+
+markdown:       kramdown
+paginate:       5
+paginate_path:  "/page:num/"   # /posts/ is where the articles live, keep pagination out of it
+permalink:      /posts/:title/  # sync.sh rewrites cross-links to match this
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-paginate
+  - jekyll-sitemap
+
+defaults:
+  - scope: { path: "", type: posts }
+    values:
+      layout: post
+      background: "/img/bg-post.svg"
+
+exclude:
+  - README.md
+  - sync.sh
+  - Gemfile
+  - Gemfile.lock
+  - vendor

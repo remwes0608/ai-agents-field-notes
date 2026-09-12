@@ -1,0 +1,8 @@
+_site/
+.jekyll-cache/
+.jekyll-metadata
+Gemfile.lock
+vendor/
+
+# Diagram sources stay local; only the exported SVG is published.
+drawings/*.drawio

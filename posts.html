@@ -1,0 +1,22 @@
+---
+layout: page
+title: Articles
+description: Everything published here, newest first.
+background: '/img/bg-index.svg'
+permalink: /posts/
+---
+
+<div class="post-preview-list">
+  {% for post in site.posts %}
+  <div class="post-preview">
+    <a href="{{ post.url | relative_url }}">
+      <h2 class="post-title">{{ post.title }}</h2>
+      {% if post.subtitle %}<h3 class="post-subtitle">{{ post.subtitle }}</h3>{% endif %}
+    </a>
+    <p class="post-meta">
+      {{ post.date | date: "%B %-d, %Y" }} &middot; {{ post.content | number_of_words | divided_by: 200 | plus: 1 }} min read
+    </p>
+    <hr>
+  </div>
+  {% endfor %}
+</div>
