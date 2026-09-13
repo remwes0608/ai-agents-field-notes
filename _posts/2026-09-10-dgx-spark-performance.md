@@ -913,8 +913,8 @@ not defaults, and getting them wrong leaves you a binary that runs, runs slow, a
 the logs about why. MTP landed later and `llama-bench` still cannot drive
 it. NVFP4 has not usefully landed at all.
 
-The temptation with a toolchain that green is to wait for it. The better move was to find the rate
-at which the agent became developable — 45 t/s, here — and start building on it. The ecosystem
-improves on its own schedule as the user base grows, and every gain in this article arrived on an
-agent that had been in daily use for weeks. Optimising a system nobody is using yet is the same
-mistake as optimising context you have not cut.
+When a toolchain is this immature, it is tempting to wait until it improves. The better move was to
+find the rate at which the agent became developable — 45 t/s, here — and start building on it. The
+ecosystem improves on its own schedule as the user base grows, and every gain in this article
+arrived on an agent that had been in daily use for weeks. Optimising a system nobody is using yet
+is the same mistake as optimising context you have not cut.
