@@ -18,7 +18,7 @@ The agent answers questions about infrastructure and software, and runs automati
 events and executes rules. All of it runs on one DGX Spark on open weights, and nothing leaves the
 network.
 
-<img src="{{ site.baseurl }}/drawings/agent-architecture.svg" alt="Architecture of the agent: Discord chat, Discord voice and an event bus feed an agent; a context builder assembles memory, rules and signals; the agent talks to a speech-to-text model, the Qwen LLM and a text-to-speech model, and reaches Kubernetes, Grafana, Harbor and GitHub through an MCP router." style="width:100%;max-width:660px;display:block;margin:1.5rem auto;">
+<img src="{{ site.baseurl }}/drawings/agent-architecture.svg" alt="Architecture of the agent: Discord chat, Discord voice and an event bus feed an agent; a context builder assembles agent memory, GraphRAG, rules and signals; the agent talks to a speech-to-text model, the Qwen LLM and a text-to-speech model, and reaches Kubernetes, Grafana, Harbor and GitHub through an MCP router, with GitHub returning a software release card to the signal files." style="width:100%;max-width:660px;display:block;margin:1.5rem auto;">
 
 *Green is the agent architecture. Everything else is a model, a transport, or a system it
 reaches.*
@@ -41,8 +41,10 @@ discipline matters more here rather than less: these turns share one finite runt
 automated turn carrying a fat prompt spends capacity the next link in the chain is queued behind.
 
 **The context builder decides what a turn costs.** Nothing reaches the model that it has not
-assembled: retrieved memory, the rule files that say what to do about an event, and the signal
-files that say what is worth noticing in the first place. That surface is what
+assembled: memory, the rule files that say what to do about an event, and the signal files that
+say what is worth noticing in the first place. Memory is not a single mechanism — retrieval is
+where it started, several rounds of optimisation sit on top of it now, and the newest of them is
+GraphRAG, added for the dependency tracking retrieval alone does not give. That surface is what
 [the context article]({{ site.baseurl }}/posts/context-before-the-runtime/) is about — the price of
 a turn is set here, before the model sees a token.
 
@@ -53,9 +55,9 @@ rather than anything to do with knowledge.
 **Everything outward goes through one MCP router.** Kubernetes, Grafana, Harbor and GitHub are what
 the agent sees; behind them sit the clusters themselves, Loki and Alloy for logs, Prometheus for
 metrics, Falco for runtime security events, a 5G core, and a long tail of others already wired in —
-the diagram names a few of them. GitHub closes the
-loop back into the signal files. The router is also where the tool catalogue lives, and the
-catalogue is the single largest thing deciding what a turn costs.
+the diagram names a few of them. GitHub closes the loop back into the signal files, as a software
+release card. The router is also where the tool catalogue lives, and the catalogue is the single
+largest thing deciding what a turn costs.
 
 **A second agent is coming, and it will chain with this one through the bus.** Compliance control
 and SDLC process optimisation, built on the same architecture — not as a bigger agent but as
