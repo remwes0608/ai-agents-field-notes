@@ -1,7 +1,7 @@
 # AI Agents Field Notes
 
-Source for a GitHub Pages site. Articles are written in a private source repository under
-`blog/` and copied here for publication.
+Source for a GitHub Pages site. Articles are written in a private repository under `blog/`
+and copied here for publication.
 
 ## Publishing an article
 
@@ -11,41 +11,9 @@ Source for a GitHub Pages site. Articles are written in a private source reposit
 git add _posts && git commit -m "publish: ..." && git push
 ```
 
-`sync.sh` writes the front matter (title, date, category, tags), strips the article's
-`# H1` — the layout renders the title itself and would otherwise print it twice — and
-rewrites links so they resolve against the site: cross-article links become
-`/posts/<slug>/`, and links to the diagnostics become `/scripts/<file>`.
-
-## The theme
-
-Vendored, not fetched: `_layouts/`, `_includes/`, `_sass/` and `assets/` are the site,
-with no `remote_theme` and no override layer. Upstream is
-[Hydrogen](https://github.com/link9596/jekyll-theme-Hydrogen), MIT, and the notice
-travels with it in `licenses/hydrogen-MIT.txt`.
-
-It is the same theme as the sibling blog, [The AI SDLC
-Memo](https://remwes0608.github.io/ai-driven-sdlc). The two are meant to read as
-siblings: one skeleton, one typeface, different colour and different voice. Colour is
-what tells them apart — that one is sea-green, this one is greyscale.
-
-Two rules worth knowing before editing it:
-
-- **Every colour is measured.** `assets/css/extra.css` opens with the palette, and each
-  token carries its WCAG contrast ratio against the surface it actually sits on. The
-  floor is 5.5:1, checked in dark mode as well as light. Where the theme shipped a colour
-  that failed, it was changed in `_sass` at source rather than overridden, so one accent
-  cannot resurface in a component nobody remembered.
-- **`_sass` is ASCII-only.** libsass, which GitHub Pages uses, reads a `_sass` file with
-  no `@charset` as US-ASCII and refuses to build on any non-ASCII byte — including one in
-  a comment. An em dash in a licence header is enough to break the site.
-
-## One-time setup
-
-1. Create the public repository and push this directory.
-2. Settings → Pages → Source: **Deploy from a branch**. The theme is vendored and the
-   only plugins are `jekyll-feed`, `jekyll-sitemap` and `jekyll-redirect-from`, all on the
-   Pages allowlist, so Pages builds this itself and there is no Actions workflow.
-3. Set `url` and `baseurl` in `_config.yml` to match where it lands.
+`sync.sh` writes the front matter, strips the article's `# H1` — the layout renders the
+title itself and would otherwise print it twice — and rewrites links to resolve against
+the site.
 
 ## Working on it locally
 
@@ -54,10 +22,14 @@ bundle install
 bundle exec jekyll serve
 ```
 
-Then http://localhost:4000/ai-agents-field-notes/ — the `/ai-agents-field-notes` part is
-`baseurl`; empty it for a user site or custom domain and the path goes away. Note that
-`jekyll serve` does not reload `_config.yml`: restart it after changing that file, or the
-change will look as though it did nothing.
+Then <http://localhost:4000/ai-agents-field-notes/>, where that path is `baseurl` — empty
+it in `_config.yml` for a user site or custom domain. Note that `jekyll serve` does **not**
+reload `_config.yml`: restart it after changing that file, or the change will look as
+though it did nothing.
+
+Pages builds the site itself from the branch. The theme is vendored and the only plugins —
+`jekyll-feed`, `jekyll-sitemap`, `jekyll-redirect-from` — are on the Pages allowlist, so
+there is no Actions workflow to maintain.
 
 ## What is generated
 
@@ -67,79 +39,86 @@ change will look as though it did nothing.
 | `/posts/` | the articles, newest first |
 | `/posts/<slug>/` | an article, with a table of contents beside it above 64em |
 | `/about/` | redirects to `/` |
-| `/scripts/` | `scripts/README.md`, rendered by `jekyll-readme-index` |
+| `/scripts/` | `scripts/README.md`, via `jekyll-readme-index` |
 | `/feed.xml`, `/sitemap.xml` | feed and sitemap |
 
 About is the front page rather than the article list: two articles make a thin landing
-page, and what a reader arriving cold needs first is what the agent is and what it runs
-on. It carries `permalink: /` and `redirect_from: /about/`, because that URL is indexed
-and is where both articles point. The band and the share metadata at the root show the
-site's own name and description rather than the page's, so someone arriving from a search
-learns where they landed before what the page covers. The redirect stub carries no
-beacon, so a redirected visit is counted once, at the destination.
+page. It carries `permalink: /` and `redirect_from: /about/`, because that URL is indexed
+and is where both articles point. At the root, the title band and the share tags show the
+site's name and description rather than the page's.
 
-The contents list is built by `assets/js/toc.js` from the page's own `h2` elements and
-stays hidden below three sections. A post gets it automatically; any other page opts in
-with `toc: true`.
+`assets/js/toc.js` builds the contents from a page's own `h2` elements, and hides it below
+three sections. A post gets it automatically; any other page opts in with `toc: true`.
 
-## What search engines see
+## The theme
 
-Every indexable page carries a unique title and meta description, a canonical URL, Open
-Graph and Twitter card tags, and JSON-LD — `BlogPosting` on an article, `WebSite`
-elsewhere. All of it is derived in `_includes/head.html` from the three values a page
-already has (title, description, date), so nothing needs maintaining per post.
+Vendored, not fetched: `_layouts/`, `_includes/`, `_sass/` and `assets/` are the site, with
+no `remote_theme` and no override layer. Upstream is
+[Hydrogen](https://github.com/link9596/jekyll-theme-Hydrogen), MIT.
 
-The share image is `img/card.png`, 1200×630 as the tags declare. It is drawn by
-`python3 tools/make-card.py` rather than screenshotted: the same artwork as the title
-bands, the site's own Plus Jakarta Sans, and the title laid out to fit rather than trusted
-to a viewport — the previous card had been captured at a width that cut it off after "AI
-Agents Field No". The script measures both text colours against the brightest pixel behind
-them and refuses to write a card under 5.5:1, which is what caught the subtitle sitting at
-5.20:1 where the trend line passes through it.
+It is the same theme as the sibling blog, [The AI SDLC
+Memo](https://remwes0608.github.io/ai-driven-sdlc) — one skeleton and one typeface,
+different colour and different voice. That one is sea-green; this one is greyscale.
 
-The site's mark is `img/favicon.svg`: three ascending bars, the motif on every title band,
-in the palette's greys with the artwork's green on the tallest. `favicon-48.png` and
-`apple-touch-icon.png` are the same geometry rasterised. Edit the SVG, then run
-`python3 tools/make-icons.py` to redraw the PNGs from the same numbers, so the three cannot
-drift apart. The green there is lifted from the artwork's `#2E6B5E` to `#4f9e8a`: the
-original measures 2.87:1 against the dark ground, which is legible as a 4px line across a
-1600px band and mud at 16px. All three are declared explicitly in the
-head, because both blogs share `remwes0608.github.io` and `/favicon.ico` at the domain
-root is not this site's to claim.
+Two rules before editing it:
 
-Two pages are kept out of the index on purpose: `/about/`, which `jekyll-redirect-from`
-marks `noindex` so the redirect cannot compete with the page it points at, and the Search
-Console verification file, excluded from the sitemap by a `defaults` rule in `_config.yml`
-— set there rather than in the file, which has to stay byte-identical.
+- **Every colour is measured.** `assets/css/extra.css` opens with the palette, each token
+  carrying its contrast ratio against the surface it sits on. The floor is 5.5:1, in dark
+  mode as well as light. Where the theme shipped a colour that failed, it was fixed at
+  source in `_sass` rather than overridden, so a stray accent cannot resurface in some
+  component nobody remembered. Code needs a separate token set per scheme, because no one
+  colour can clear the floor on both the light and the dark code block — the arithmetic is
+  in `extra.css`.
+- **`_sass` is ASCII-only.** libsass, which Pages uses, reads a `_sass` file with no
+  `@charset` as US-ASCII and refuses to build on any non-ASCII byte — including one in a
+  comment. An em dash in a licence header is enough to break the site.
+
+## Images and search metadata
+
+`_includes/head.html` derives each page's title, description, canonical URL, Open Graph,
+Twitter card and JSON-LD from values the page already has, so none of it is maintained per
+post.
+
+Two assets are generated rather than drawn by hand. Edit the source, then re-run:
+
+```sh
+python3 tools/make-card.py    # img/card.png, the 1200x630 link preview
+python3 tools/make-icons.py   # the PNG icons, redrawn from img/favicon.svg
+```
+
+Both refuse to produce something unreadable — the card script measures its text against the
+brightest pixel behind it and fails below 5.5:1. The favicon's green is lifted from the
+artwork's `#2E6B5E` to `#4f9e8a`, which the original is too dark to survive at 16px. The
+icons are declared explicitly in the head because both blogs share `remwes0608.github.io`,
+so `/favicon.ico` at the domain root is not this site's to claim.
+
+Two pages stay out of the index deliberately: `/about/`, which `jekyll-redirect-from` marks
+`noindex` so the redirect cannot compete with the page it points at, and the Search Console
+verification file, excluded from the sitemap by a `defaults` rule in `_config.yml` — set
+there because the file itself has to stay byte-identical.
 
 ## Analytics
 
 Cloudflare Web Analytics, emitted at the end of `_layouts/default.html` and only when
-`jekyll.environment` is `production` — so local reading under `jekyll serve` is never
-counted. It sets no cookies and stores no per-visitor identifier, which is the whole
-reason it is here and the reason the site needs no consent banner. It is also the only
-third-party request the site makes at all: the typeface is served from `assets/css/` and
-the icons are inline SVG, so the beacon is the one thing a reader fetches from anyone
-else. The token in `_config.yml` is public by design — it ships in the page source to
-every visitor.
+`jekyll.environment` is `production`, so local reading is never counted. It is cookieless
+and stores no per-visitor identifier, which is why the site needs no consent banner — and
+it is the only third-party request the site makes, since the typeface is served locally and
+the icons are inline SVG. The token in `_config.yml` is public by design.
 
-Cloudflare keys a site by hostname, so `remwes0608.github.io` is one property covering
-both blogs that live there; this site reuses that token and is told apart in the
-dashboard by path. Moving to a domain of its own is the only thing that would call for a
-second token.
+Cloudflare keys a site by hostname, so `remwes0608.github.io` is one property covering both
+blogs that live there; this one reuses that token and is told apart by path. Only moving to
+a domain of its own would call for a second.
 
 ## Licence
 
 Prose and measurements: CC BY 4.0. Code and configuration snippets: MIT. See `LICENSE`.
 
-Two things vendored here carry their own terms, and both notices have to travel with
-them:
+The vendored parts keep their own terms, and both notices have to travel with them:
 
 | what | licence |
 | --- | --- |
-| the theme, in `_layouts/`, `_includes/`, `_sass/`, `assets/` | MIT — `licenses/hydrogen-MIT.txt` |
-| Plus Jakarta Sans, in `assets/css/*.ttf` | SIL OFL 1.1 — `licenses/PlusJakartaSans-OFL.txt` |
+| the theme | MIT — `licenses/hydrogen-MIT.txt` |
+| Plus Jakarta Sans, `assets/css/*.ttf` | SIL OFL 1.1 — `licenses/PlusJakartaSans-OFL.txt` |
 
-The OFL is the reason the font files are served from `assets/css/` rather than pulled from
-a CDN and forgotten about: redistributing them is allowed, and this is what redistributing
-them properly requires.
+The OFL is why the fonts are served from `assets/css/` rather than pulled from a CDN and
+forgotten: redistributing them is allowed, and this is what doing it properly requires.
