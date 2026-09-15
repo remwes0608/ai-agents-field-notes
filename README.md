@@ -131,4 +131,15 @@ second token.
 ## Licence
 
 Prose and measurements: CC BY 4.0. Code and configuration snippets: MIT. See `LICENSE`.
-The vendored theme keeps its own MIT notice in `licenses/hydrogen-MIT.txt`.
+
+Two things vendored here carry their own terms, and both notices have to travel with
+them:
+
+| what | licence |
+| --- | --- |
+| the theme, in `_layouts/`, `_includes/`, `_sass/`, `assets/` | MIT — `licenses/hydrogen-MIT.txt` |
+| Plus Jakarta Sans, in `assets/css/*.ttf` | SIL OFL 1.1 — `licenses/PlusJakartaSans-OFL.txt` |
+
+The OFL is the reason the font files are served from `assets/css/` rather than pulled from
+a CDN and forgotten about: redistributing them is allowed, and this is what redistributing
+them properly requires.
