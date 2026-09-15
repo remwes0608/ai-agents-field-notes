@@ -490,18 +490,61 @@ body { color: var(--ink); }
      tag names #000080 on the dark block   1.05:1   effectively invisible
      plain     #567482 on the light block  4.60:1   passes AA, under the 5.5 here
 
-   Six of seven token colours are under AA in dark mode, because the theme is a light-mode palette
-   that its own dark mode never revisits. Rather than author a second syntax theme, the colour
-   comes out: code is set in the palette's own two greys, with comments the muted one and italic
-   so the one distinction worth keeping survives. Greyscale prose next to greyscale code is also
-   the more honest version of this site. */
+   Six of seven token colours are under AA in dark mode. That is not carelessness by whoever wrote
+   the theme; it is arithmetic. Clearing 4.5:1 against the light code block (#f3f6fa) caps a
+   colour's relative luminance at 0.165, and clearing it against the dark one (#1b1e21) demands at
+   least 0.232. The two ranges do not overlap, so no single colour can sit on both — a syntax
+   theme that ships one palette for both schemes is already broken on the day it is written. At
+   this site's own 5.5:1 floor the gap is wider: 0.126 against 0.295.
+
+   Which leaves two honest options: take the colour out, or author a full token set per scheme.
+   This is the second. Every value below is measured against the surface it sits on — #f3f6fa in
+   light, #1b1e21 in dark — and nothing is under the site's 5.5:1 floor: the worst is 5.82:1 light
+   and 5.77:1 dark, both the comment grey, which is the one token meant to recede.
+
+   Luminance is spread as well as hue, because two tokens at the same lightness are one colour to
+   a reader who cannot separate the hues. The set runs 5.8:1 to 10.6:1 in light and 5.8:1 to
+   10.7:1 in dark, so the ordering survives in greyscale. Comments keep their italic too, which is
+   the one distinction that needs no colour at all.
+
+   One reassignment rather than a colour: `se` is an escape, and in these posts that means the
+   backslash continuing a shell line. It is punctuation, not string, so it takes the operator grey
+   — which also stops the commonest pair on the site, option flags against line continuations,
+   from being green beside teal at the same lightness. */
+:root {
+  --code-comment:  #586169;  /*  5.82:1 on the light block */
+  --code-string:   #1d6b4d;  /*  5.94:1 */
+  --code-keyword:  #2a5aa0;  /*  6.31:1 */
+  --code-number:   #653fa3;  /*  6.94:1 */
+  --code-name:     #0e4c58;  /*  8.83:1  option flags, tags, inline code */
+  --code-variable: #6b3508;  /*  9.06:1 */
+  --code-punct:    #333a42;  /* 10.62:1  operators, escapes, plain code */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --code-comment:  #8f99a1;  /*  5.77:1 on the dark block */
+    --code-variable: #d99a6c;  /*  7.01:1 */
+    --code-keyword:  #8fb0ea;  /*  7.63:1 */
+    --code-number:   #c7a5e6;  /*  7.94:1 */
+    --code-punct:    #b3bcc3;  /*  8.69:1 */
+    --code-string:   #93cfa6;  /*  9.34:1 */
+    --code-name:     #9ad9de;  /* 10.65:1 */
+  }
+}
+
 .main-content pre,
-.main-content pre code,
-.main-content code { color: var(--ink); }
+.main-content pre code { color: var(--code-punct); }
+
+/* Code in prose. A command named mid-sentence is a different kind of thing from the words either
+   side of it, and on a greyscale page the monospace face alone was carrying that on its own. It
+   takes the name colour — the same one the option flags inside a block take, so `--ctk` reads the
+   same whether it is quoted in a sentence or shown in the command it belongs to. */
+.main-content code { color: var(--code-name); }
 
 /* Rouge's own rules are `.highlight .nt`, so a plain `pre span` loses to them on specificity;
    `.main-content .highlight span` is one class heavier and wins without an !important. */
-.main-content .highlight span { color: inherit; }
+.main-content .highlight span { color: var(--code-punct); }
 
 .main-content .highlight .c,
 .main-content .highlight .cd,
@@ -509,9 +552,50 @@ body { color: var(--ink); }
 .main-content .highlight .cm,
 .main-content .highlight .cp,
 .main-content .highlight .cs {
-  color: var(--muted);
+  color: var(--code-comment);
   font-style: italic;
 }
+
+.main-content .highlight .s,
+.main-content .highlight .s1,
+.main-content .highlight .s2,
+.main-content .highlight .sb,
+.main-content .highlight .sc,
+.main-content .highlight .sd,
+.main-content .highlight .sh,
+.main-content .highlight .si,
+.main-content .highlight .sx,
+.main-content .highlight .sr,
+.main-content .highlight .ss { color: var(--code-string); }
+
+.main-content .highlight .k,
+.main-content .highlight .kc,
+.main-content .highlight .kd,
+.main-content .highlight .kn,
+.main-content .highlight .kp,
+.main-content .highlight .kr,
+.main-content .highlight .kt,
+.main-content .highlight .ow { color: var(--code-keyword); }
+
+.main-content .highlight .m,
+.main-content .highlight .mf,
+.main-content .highlight .mh,
+.main-content .highlight .mi,
+.main-content .highlight .mo,
+.main-content .highlight .il { color: var(--code-number); }
+
+.main-content .highlight .na,
+.main-content .highlight .nc,
+.main-content .highlight .nf,
+.main-content .highlight .nl,
+.main-content .highlight .nn,
+.main-content .highlight .nt { color: var(--code-name); }
+
+.main-content .highlight .nv,
+.main-content .highlight .vc,
+.main-content .highlight .vg,
+.main-content .highlight .vi,
+.main-content .highlight .no { color: var(--code-variable); }
 
 /* ---- Footer ---------------------------------------------------------- */
 .site-footer {
