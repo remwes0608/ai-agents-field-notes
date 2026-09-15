@@ -1,12 +1,10 @@
 <head>
 
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14181b">
 
-  <title>
-    {% if page.title %}{{ page.title | escape }} - {{ site.title | escape }}
-    {% else %}{{ site.title | escape }}{% endif %}
-  </title>
+  <title>{% if page.title and page.url != '/' %}{{ page.title | escape }} - {{ site.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
 
   <meta name="description" content="{{ page.description | default: page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
 
@@ -14,14 +12,21 @@
   Open Graph and Twitter cards decide how a link renders when someone shares it; JSON-LD is what
   search engines read for the article's author, dates and headline. Both are derived from the same
   three values the page already has — title, description, date — so nothing here needs maintaining
-  per post. `page.description` is set by sync.sh; the excerpt is the fallback.
+  per post. `page.description` is set per post in front matter; the excerpt is the fallback.
+  {%- endcomment -%}
+  {%- comment -%}
+  At the root the shared title is the site's, not the page's: what gets posted to Slack or
+  LinkedIn should say "AI Agents Field Notes", not "About". The <title> tag above already makes
+  the same exception.
   {%- endcomment -%}
   {%- assign page_title = page.title | default: site.title | escape -%}
+  {%- if page.url == '/' -%}{%- assign page_title = site.title | escape -%}{%- endif -%}
   {%- assign page_desc = page.description | default: page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 200 | escape -%}
   {%- assign page_url = page.url | replace:'index.html','' | absolute_url -%}
   {%- assign card_image = "/img/card.png" | absolute_url -%}
 
   <meta property="og:site_name" content="{{ site.title | escape }}">
+  <meta property="og:locale" content="{{ site.og_locale | default: 'en_GB' }}">
   <meta property="og:type" content="{% if page.date %}article{% else %}website{% endif %}">
   <meta property="og:title" content="{{ page_title }}">
   <meta property="og:description" content="{{ page_desc }}">
@@ -64,16 +69,61 @@
   }
   </script>
 
-  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  {%- comment -%}
+  Local overrides on top of the vendored theme: the reading measure, the title band, the table of
+  contents, and the wide tables and diff blocks these articles carry.
+  {%- endcomment -%}
+  <link rel="stylesheet" href="{{ '/assets/css/extra.css' | relative_url }}?v={{ site.time | date: '%s' }}">
+  {%- comment -%}
+  The title band, and on About a portrait, painted as background images from front matter.
 
-  <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+  The sibling blog serves each picture in two sizes, chosen by media query, because its bands are
+  1600px photographs and a phone can use a quarter of that. The bands here are SVGs of about 2 kB
+  — a gradient, a grid and a polyline — so there is nothing to save and no second file to keep in
+  step: one rule covers every width. The portrait keeps the two-size mechanism, since a portrait
+  would be a photograph; it is inert until a page sets `avatar`.
 
-  <link rel="stylesheet" href="{{"/assets/main.css" | relative_url }}">
-  <!-- Local overrides: the theme is built for short prose, these articles are
-       long and carry wide tables and 150-column journal excerpts. -->
-  <link rel="stylesheet" href="{{ "/assets/css/extra.css" | relative_url }}?v={{ site.time | date: '%s' }}">
+  The scrim is much lighter here than on the sibling for the same reason. Its 0.72/0.62 is sized
+  for the worst case a photograph can be, a white one. These bands are known and near-black, and
+  their brightest pixel — the trend line, #2E6B5E at 0.85 over the gradient — already holds white
+  text at 7.2:1 bare. The scrim below takes that to 9.8:1 while leaving the artwork visible;
+  0.72 would flatten it to near-black and buy nothing. If a photograph is ever used as a band,
+  put the sibling's alphas back, because this pair does not carry that guarantee: over white it
+  measures 1.9:1.
+  {%- endcomment -%}
+  {%- if page.background or page.avatar %}
+  {%- assign face_sm = page.avatar | replace: '.jpg', '-sm.jpg' -%}
+  <style>
+  {%- if page.background %}
+  .page-header {
+    background-image:
+      linear-gradient(to bottom, rgba(20, 24, 27, 0.30), rgba(20, 24, 27, 0.20)),
+      url('{{ page.background | relative_url }}');
+    background-size: cover;
+    background-position: center;
+  }
+  {%- endif %}
+  {%- if page.avatar %}
+  .author-portrait--toc { background-image: url('{{ face_sm | relative_url }}'); }
+  @media screen and (min-width: 64em) {
+    .author-portrait--inline { background-image: url('{{ page.avatar | relative_url }}'); }
+  }
+  {%- endif %}
+  </style>
+  {%- endif %}
+
+  {%- comment -%}
+  The icon a search result shows beside the link, and the one a phone puts on a home screen. These
+  have to be declared rather than left to /favicon.ico: both blogs live on remwes0608.github.io,
+  so the domain root is not this site's to claim, and a browser falling back to it would fetch the
+  other one's mark. SVG first, with a 48px PNG behind it for anything that does not take SVG.
+  {%- endcomment -%}
+  <link rel="icon" href="{{ '/img/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="alternate icon" href="{{ '/img/favicon-48.png' | relative_url }}" sizes="48x48" type="image/png">
+  <link rel="apple-touch-icon" href="{{ '/img/apple-touch-icon.png' | relative_url }}">
+
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
-  <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ "/feed.xml" | relative_url }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ '/feed.xml' | relative_url }}">
 
 </head>

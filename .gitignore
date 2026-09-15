@@ -6,3 +6,6 @@ vendor/
 
 # Diagram sources stay local; only the exported SVG is published.
 drawings/*.drawio
+
+# Local editor/agent scratch, not part of the site.
+.claude/

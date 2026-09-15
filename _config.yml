@@ -12,18 +12,36 @@ github_username: remwes0608
 # Footer social links; the theme builds https://www.linkedin.com/in/<slug>
 linkedin_username: remigiusz-weska-5683335
 
-remote_theme: StartBootstrap/startbootstrap-clean-blog-jekyll
+# Cloudflare Web Analytics. Cookieless, so no consent banner is needed. The token is public
+# by design — it ships in the page source. Cloudflare keys a site by hostname, and
+# remwes0608.github.io already hosts another blog, so this is the SAME token as that one;
+# the two are told apart by path in the dashboard. A separate token would only be needed if
+# this blog moved to a domain of its own.
+cloudflare_analytics: "e20691876da14167affedb02d8c800f8"
+
+# The theme is vendored into this repository rather than pulled with remote_theme: it is small
+# (four templates and a few stylesheets), most of it has been modified, and a pinned copy cannot
+# change under the site. Upstream is https://github.com/link9596/jekyll-theme-Hydrogen, MIT,
+# retained in licenses/hydrogen-MIT.txt. It is the same theme as The AI SDLC Memo; the two blogs
+# are meant to read as siblings, sharing a skeleton and differing in colour and voice.
+lang: en
+# og:locale wants a language_TERRITORY pair, where `lang` above is the bare code the <html> tag
+# takes. British, because the prose is: "licence", "colour", "optimise".
+og_locale: en_GB
 
 markdown:       kramdown
-paginate:       5
-paginate_path:  "/page:num/"   # /posts/ is where the articles live, keep pagination out of it
 permalink:      /posts/:title/  # sync.sh rewrites cross-links to match this
 
+# No paginate: the article list lives at /posts/ and renders site.posts directly rather than going
+# through paginator, because two articles do not need a second page and a stale /page2/ is worse
+# than none.
+
 plugins:
-  - jekyll-remote-theme
   - jekyll-feed
-  - jekyll-paginate
   - jekyll-sitemap
+  # About is the site's front page, so it takes `permalink: /`. This serves the /about/ it used to
+  # live at as a redirect, because that URL is indexed and linked from inside the articles.
+  - jekyll-redirect-from
 
 defaults:
   - scope: { path: "", type: posts }
@@ -31,9 +49,27 @@ defaults:
       layout: post
       background: "/img/bg-post.svg"
 
+  # jekyll-readme-index turns scripts/README.md into a page. Left alone it inherits the site's own
+  # description and a lowercase "scripts" for a title, which is a poor search result for a page
+  # that is really an appendix to the articles. Set here rather than in the file's front matter,
+  # because front matter in a README renders as a table on the repository page.
+  - scope: { path: "scripts" }
+    values:
+      title: "Diagnostic scripts"
+      description: "The two scripts behind the numbers in these articles: one measures memory bandwidth, the other what a live llama.cpp backend is actually doing."
+      background: "/img/bg-post.svg"
+
+  # The Search Console verification file. It has to stay reachable and byte-identical, so it keeps
+  # no front matter of its own; this leaves the file alone and only keeps a page with no title,
+  # no description and nothing to read from being offered to Google as worth indexing.
+  - scope: { path: "google37fe15cdfbc965ec.html" }
+    values:
+      sitemap: false
+
 exclude:
   - README.md
   - sync.sh
   - Gemfile
   - Gemfile.lock
   - vendor
+  - tools

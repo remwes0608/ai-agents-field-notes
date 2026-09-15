@@ -28,6 +28,6 @@ esc() { printf '%s' "$1" | sed 's/"/\\"/g'; }
     | sed -E 's|\]\((\./)?[0-9]{4}-[0-9]{2}-[0-9]{2}-([a-z0-9-]+)\.html?\)|]({{ site.baseurl }}/\2/)|g' \
     | sed -E 's|\]\((\./)?[0-9]{4}-[0-9]{2}-[0-9]{2}-([a-z0-9-]+)\.md\)|]({{ site.baseurl }}/posts/\2/)|g' \
     | sed -E 's|\]\((scripts/[A-Za-z0-9_.-]+)\)|]({{ site.baseurl }}/\1)|g' \
-    | sed -E 's|\]\(about\.md\)|]({{ site.baseurl }}/about/)|g'
+    | sed -E 's|\]\(about\.md\)|]({{ site.baseurl }}/)|g'  # About is the front page
 } > "$DST"
 echo "wrote $DST  <- $TITLE"

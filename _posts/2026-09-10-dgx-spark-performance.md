@@ -8,7 +8,7 @@ background: "/img/bg-post.svg"
 **How much can you get out of a DGX Spark before deciding it is not enough to run an agent on —
 and why chasing tokens per second should not always be the goal?**
 
-The machine and the workload are [on the About page]({{ site.baseurl }}/about/): a DGX Spark (GB10) with 128 GB of
+The machine and the workload are [on the About page]({{ site.baseurl }}/): a DGX Spark (GB10) with 128 GB of
 unified memory and no separate VRAM, serving an infrastructure agent. **Bandwidth is the only
 constraint that matters here**, and every number below is downstream of it.
 

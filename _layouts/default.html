@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: 'en' }}">
+{% include head.html %}
+<body>
+
+{% include site-header.html %}
+
+{%- comment -%}
+The title band. Hydrogen's own `page-header`, kept deliberately short: it names what you are
+reading and then gets out of the way. The sticky bar above carries the site's identity from here
+on, which is the job the old 500px hero was failing to do.
+{%- endcomment -%}
+{%- comment -%}
+The front page is About, not a post list, so "home" here means the page at the root whatever its
+layout: it is the one place that has to say what the whole site is. It takes the site's own name
+and description rather than the page's, because a reader arriving from a search needs to learn
+where they landed before they learn what this particular page covers.
+{%- endcomment -%}
+{%- assign is_front = false -%}
+{%- if page.layout == 'home' or page.url == '/' -%}{%- assign is_front = true -%}{%- endif -%}
+{%- assign page_title = page.title | default: site.title | escape -%}
+{%- assign page_tagline = page.subtitle | default: page.tagline | default: page.description -%}
+{%- if is_front -%}
+{%- assign page_title = site.title | escape -%}
+{%- assign page_tagline = site.description -%}
+{%- endif -%}
+<section class="page-header{% if is_front %} page-header-home{% endif %}">
+  <h1 class="project-name">{{ page_title }}</h1>
+  {% if page_tagline %}<h2 class="project-tagline">{{ page_tagline | escape }}</h2>{% endif %}
+  {% if page.layout == 'post' %}
+  <p class="project-date">
+    <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%B %-d, %Y' }}</time>
+    &middot; {{ page.author | default: site.author | escape }}
+    &middot; {% include read_time.html content=page.content %}
+  </p>
+  {% endif %}
+</section>
+
+<section class="main-content">
+  {{ content }}
+  {% include footer.html %}
+</section>
+
+<script src="{{ '/assets/js/core.js' | relative_url }}"></script>
+{% if page.layout == 'post' or page.toc %}<script src="{{ '/assets/js/toc.js' | relative_url }}"></script>{% endif %}
+
+{%- comment -%}
+Cloudflare Web Analytics: page views, referrers and paths, with no cookies and nothing stored on
+the reader's machine — which is the only reason a site that strips third-party requests carries a
+third-party script at all. `jekyll.environment` is production on GitHub Pages and development
+under `jekyll serve`, so the beacon never fires while writing.
+{%- endcomment -%}
+{%- if jekyll.environment == "production" and site.cloudflare_analytics %}
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "{{ site.cloudflare_analytics }}"}'></script>
+{%- endif %}
+</body>
+</html>

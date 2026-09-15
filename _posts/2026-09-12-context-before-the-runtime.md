@@ -22,7 +22,7 @@ This is the half that came first. The runtime tuning that followed is
 than all six of its stages on the number a person actually feels.
 
 Everything below runs on an **NVIDIA DGX Spark (GB10)** serving a 35B sparse MoE through llama.cpp;
-the machine and the workload are [on the About page]({{ site.baseurl }}/about/). What matters for this article is the
+the machine and the workload are [on the About page]({{ site.baseurl }}/). What matters for this article is the
 ratio: a turn reads **9–17 prompt tokens for every token it generates**. Expect different absolute
 numbers on other hardware — the shape is what transfers.
 

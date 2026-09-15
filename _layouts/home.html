@@ -1,0 +1,18 @@
+---
+layout: default
+---
+{{ content }}
+
+<ul class="post-list">
+  {%- comment -%}
+  Newest first here, for someone coming back for what is new. The Articles page runs the other
+  way round, because there the posts are an argument in sequence.
+  {%- endcomment -%}
+  {% for post in site.posts %}
+  <li>
+    <span class="post-meta">{{ post.date | date: '%B %-d, %Y' }} &middot; {% include read_time.html content=post.content %}</span>
+    <h2><a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
+    {% if post.subtitle %}<p class="post-subtitle">{{ post.subtitle | escape }}</p>{% endif %}
+  </li>
+  {% endfor %}
+</ul>

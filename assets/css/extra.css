@@ -1,135 +1,584 @@
-/* Clean Blog on Bootstrap 4 lets <pre> and <table> push the page sideways.
-   These articles have journal lines ~150 characters wide and 16 tables, so
-   each has to scroll inside its own box instead. */
+/* Local layer on top of the vendored Hydrogen theme.
+   Hydrogen is built for short posts; these articles run to 2,500 words with tables, diffs and
+   ten sections, so what is set here is the reading measure, the table of contents beside it,
+   the persistent bar's social links, and the blocks that would otherwise push the page sideways. */
 
-.post-container, article {
-  overflow-wrap: break-word;
+/* ---- Palette ---------------------------------------------------------
+   Greyscale, and that is the point. This site and The AI SDLC Memo share a skeleton and a
+   typeface deliberately, so colour is what tells them apart: that one is sea-green, this one is
+   graphite. It also follows the artwork — the title bands here are near-black SVGs, not
+   photographs — and it suits articles that are mostly numbers, where the only thing worth a
+   colour is the measurement, and it does not get one either.
+
+   Every pair below is measured, and the number is the WCAG contrast ratio against the surface it
+   sits on. AA wants 4.5:1 for body text and 3:1 for large text; nothing here is under 5.5.
+
+   The one hue left in the design is the #2E6B5E of the band artwork's trend line, echoed by the
+   rule down the left of a code block. It appears twice, never behind text, and is never a token.
+
+   The theme shipped three colours that failed or shouted, and all three are gone at source, in
+   _sass: a #009688 teal and a #159957 green for links and headings (both 3.6:1 — under AA for
+   body text), and a #E91E63 pink for the menu, which belongs to a different blog entirely.
+
+   What is deliberately left alone is the syntax highlighting in _sass/rouge-github.scss. A code
+   theme is read as code, not as the site's voice, and these posts quote mostly untagged blocks
+   where none of it shows. */
+:root {
+  --ink:            #343b41;  /* body text              11.4:1 on the page */
+  --muted:          #585f66;  /* dates, captions         6.5:1 */
+  --accent:         #2b3940;  /* links, headings, rules 11.9:1 */
+  --accent-on-dark: #bfcad0;  /* links on the bar        9.3:1; on the band 5.9:1 */
+  --bar:            rgba(18, 23, 26, 0.94);
+  --band:           #14181b;  /* white title on it      17.9:1 flat, 9.8:1 over the artwork */
 }
 
-article pre,
-.post-container pre {
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink:    #c8ccd0;        /* 11.6:1 on the theme's #121212 */
+    --muted:  #979da3;        /*  6.8:1 */
+    --accent: #a9bcc6;        /*  9.5:1 */
+  }
+}
+
+/* A near-neutral accent cannot carry a link on its own: hue is what usually says "this is a
+   link", and there is no hue here to say it. So content links are underlined rather than merely
+   darker, which is WCAG 1.4.1 — never colour as the only signal — and is the price of greyscale.
+
+   Scoped to #post-body, which is the prose: the post lists and the table of contents are made of
+   links already understood as links by their position, and underlining those would draw the very
+   line down the page the greyscale is meant to avoid. */
+#post-body p a,
+#post-body li a,
+#post-body td a { text-decoration: underline; text-underline-offset: 2px; }
+
+/* ---- The bar --------------------------------------------------------- */
+/* Hydrogen paints the bar with an inline style built from `theme_color`, and drops a material
+   three-layer shadow under it. Both are set here instead: the colour belongs with the rest of the
+   design rather than in _config.yml, and the shadow was doing the work of a hairline. */
+.site-header {
+  background-color: var(--bar);
+  box-shadow: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.site-title {
+  font-family: "txtbold", "Open Sans", sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: -0.2px;
+}
+
+/* Links in the bar carry the accent rather than solid white: white competes with the title for
+   the eye, and there is only one thing up there worth being the brightest. */
+.site-nav .page-link {
+  color: var(--accent-on-dark);
+  font-size: 0.95rem;
+  transition: color 0.15s;
+}
+
+.site-nav .page-link:hover { color: #fff; }
+
+/* Title left, menu centred, social links right, all on one baseline. The theme floats these
+   three, which stacks them in source order and leaves the menu wherever it lands; one flex row
+   places them instead. The bar also takes the content area's width rather than the theme's
+   narrower 54em, so the site's name sits directly above the article's left edge. */
+@media screen and (min-width: 38.01em) {
+  .site-header .wrapper {
+    display: flex;
+    align-items: center;
+    max-width: 74rem;
+  }
+
+  /* The links sit against the title rather than centred on the bar: one compact group on the
+     left reads as a single piece of navigation, where a centred menu reads as three separate
+     things to look at. The empty middle is what makes the bar quiet. */
+  .site-title { float: none; flex: 0 0 auto; margin-right: 2.2rem; }
+
+  .site-nav {
+    float: none;
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .site-nav .trigger {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .site-nav .page-link:not(:last-child) { margin-right: 0; }
+
+  .site-social {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .site-social .social-links { height: auto; }
+}
+
+/* Social links: always on screen, which is the reason this theme was chosen. On a phone the page
+   links fold into the menu and these do not, so they sit outside `.trigger`, left of the
+   hamburger. */
+.site-social {
+  float: right;
+}
+
+/* On a phone the title, the icons and the menu button have to share one row, or the icons drop
+   below the bar and land on top of the title band. The theme floats them; a flex row is the
+   shorter fix, and it keeps the icons visible — which is the whole reason they are up here. */
+@media screen and (max-width: 38em) {
+  .site-header .wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .site-title {
+    float: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1.15rem;
+    line-height: 54px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .site-social {
+    float: none;
+    margin-right: 42px;
+  }
+
+  .social-links { height: 54px; gap: 16px; }
+
+  /* The theme's dropdown links are its own pink; this site has one accent and it is the graphite
+     already on every heading. */
+  .site-nav .trigger .page-link { color: var(--accent); }
+
+  .page-header { padding-top: 4.8rem; }
+}
+
+.social-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 67px;
+}
+
+.social-links a {
+  color: rgba(255, 255, 255, 0.82);
+  display: inline-flex;
+  transition: color 0.15s;
+}
+
+.social-links a:hover { color: #fff; }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- The title band -------------------------------------------------- */
+/* Short on purpose. It names the page and stops; the bar above it carries the site from here on.
+   Padding-top clears the fixed bar, which floats over the band by design. */
+.page-header {
+  padding: 5rem 2rem 2.6rem;
+  background-color: var(--band);
+  background-image: none;
+}
+
+@media screen and (min-width: 64em) {
+  .page-header { padding: 6rem 6rem 3rem; }
+}
+
+.page-header .project-name {
+  font-family: "txtbold", "Open Sans", sans-serif;
+  font-size: 2rem;
+  line-height: 1.15;
+  margin: 0 auto;
+  max-width: 46rem;
+}
+
+@media screen and (min-width: 64em) {
+  .page-header .project-name { font-size: 2.6rem; }
+}
+
+.page-header .project-tagline {
+  font-size: 1.05rem;
+  font-weight: 400;
+  opacity: 0.88;
+  margin: 0.7rem auto 0;
+  max-width: 44rem;
+  line-height: 1.45;
+}
+
+.page-header .project-date {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  margin: 1rem 0 0;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Reading ---------------------------------------------------------- */
+/* The theme's body grey is pitched for short posts; at 2,500 words it reads as washed out and
+   the contrast is marginal on a bright screen. */
+body { color: var(--ink); }
+.main-content p { line-height: 1.68; }
+
+/* ---- The portrait on About ------------------------------------------- */
+/* Two placements, one visible at a time. On a wide screen it floats into the opening paragraphs
+   and the text wraps around it. On a narrow one a 150px circle there would take a third of the
+   column, so it rides inside the contents box instead, to the left of the list — where the two
+   things that introduce the page, a face and its outline, sit together. */
+.author-portrait {
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+.author-portrait--inline { display: none; }
+
+/* A row rather than a float: floated, the list wrapped under the portrait halfway down and the
+   left edge went ragged mid-list. */
+.post-toc { display: flex; align-items: flex-start; }
+.post-toc-body { flex: 1 1 auto; min-width: 0; }
+
+/* On the right, not the left: the list's lines are short and ragged on the right, so a circle
+   there fills the corner they leave empty. On the left it pushed the whole list inwards and made
+   the emptiness worse. */
+.author-portrait--toc {
+  flex: 0 0 auto;
+  order: 2;
+  width: 84px;
+  height: 84px;
+  margin: 0.15rem 0 0 0.95rem;
+}
+
+@media screen and (min-width: 64em) {
+  .author-portrait--toc { display: none; }
+  .post-toc { display: block; }
+
+  .author-portrait--inline {
+    display: block;
+    float: right;
+    width: 152px;
+    height: 152px;
+    margin: 0.35rem 0 1.4rem 2rem;
+  }
+}
+
+/* ---- The measure, and the contents beside it ------------------------- */
+.main-content { max-width: 74rem; }
+
+.post-with-toc { display: block; }
+
+#post-body { max-width: 44rem; }
+
+/* A page with no contents beside it — About, and any post too short for a table of contents —
+   centres its column instead of leaving it against the left edge of a 74rem shell. */
+.main-content > #post-body,
+.main-content > .post-list { margin-left: auto; margin-right: auto; }
+.main-content > .post-list { max-width: 48rem; }
+
+.post-toc {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin: 0 0 2.5rem;
+  padding: 0.9rem 1rem;
+  border-left: 3px solid var(--accent);
+  background: rgba(43, 57, 64, 0.05);
+}
+
+.post-toc-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.post-toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-toc li { margin: 0.35rem 0; }
+
+.post-toc a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.post-toc a:hover { color: var(--accent); }
+
+.post-toc li.is-current a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Above this width there is room for the contents to sit beside the article and follow the
+   reader down it. Below it they stack above the text, where the same list reads as a summary of
+   what is coming. */
+@media screen and (min-width: 64em) {
+  .post-with-toc {
+    display: grid;
+    grid-template-columns: minmax(0, 44rem) 15rem;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .post-toc {
+    order: 2;
+    position: sticky;
+    top: 5.5rem;
+    max-height: calc(100vh - 8rem);
+    overflow-y: auto;
+    margin: 0;
+  }
+
+  #post-body { order: 1; }
+}
+
+/* ---- Post lists ------------------------------------------------------ */
+/* One paragraph above the Articles list. It exists because the ordering no longer says how to
+   read the posts, and because most arrivals are mid-sequence from a search. */
+.page-intro {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 2.4rem;
+  padding-bottom: 1.6rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+@media (prefers-color-scheme: dark) {
+  .page-intro { border-bottom-color: rgba(255, 255, 255, 0.08); }
+}
+
+.post-list { list-style: none; padding: 0; }
+
+.post-list > li {
+  margin-bottom: 2.2rem;
+  padding-bottom: 1.6rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.post-list h2 {
+  margin: 0.25rem 0 0.4rem;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+.post-list .post-meta {
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.post-list .post-subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+
+/* ---- Blocks that would otherwise widen the page ---------------------- */
+/* These articles quote specs, YAML and diffs at full width, so each block scrolls inside its own
+   box instead of pushing the page sideways. */
+#post-body, .main-content article { overflow-wrap: break-word; }
+
+.main-content pre {
   overflow-x: auto;
   white-space: pre;
   font-size: 0.78rem;
   line-height: 1.55;
-  background: #f6f7f5;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  /* Carried over from this blog's previous theme, and the only hue outside the artwork: the same
+     #2E6B5E as the trend line on the title bands. It marks a block as quoted machine output
+     without tinting anything that has to be read, which is why a greyscale palette can afford it. */
   border-left: 3px solid #2E6B5E;
-  border-radius: 3px;
-  padding: 0.9rem 1rem;
 }
 
-article pre code,
-.post-container pre code {
-  font-size: inherit;
-  background: none;
-  padding: 0;
-}
+/* The sibling blog's tables carry prose, so its cells wrap and the table fits the measure. These
+   carry columns of figures — seventeen of them in one article, five columns wide — and a wrapped
+   numeric row stops being readable as a row. So the opposite rule applies here: cells keep their
+   line and the table scrolls inside its own box.
 
-/* Tables: scroll in place, and read as data rather than prose. */
-article table,
-.post-container table {
+   That box is not a nicety. Without it a five-column table is 531px wide, which at 375px is wider
+   than the screen, and because nothing above it clips, it is the whole page that scrolls sideways
+   — taking the fixed bar with it, so the menu ends up off the right-hand edge. */
+.main-content table {
   display: block;
   overflow-x: auto;
   white-space: nowrap;
   width: 100%;
-  font-family: "Open Sans", system-ui, sans-serif;
   font-size: 0.86rem;
   font-variant-numeric: tabular-nums;
   border-collapse: collapse;
   margin-bottom: 1.6rem;
 }
 
-article table th,
-.post-container table th {
+.main-content table th {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.7rem;
-  color: #6b736f;
+  color: var(--muted);
+  text-align: left;
   border-bottom: 2px solid rgba(0, 0, 0, 0.2);
 }
 
-article table th,
-article table td,
-.post-container table th,
-.post-container table td {
-  padding: 0.45rem 0.8rem;
-  text-align: left;
+/* Horizontal rules only. The theme boxes every cell — `border: 1px solid` on th and td — which
+   draws a vertical line between every column and turns a table of figures into a grid of cells.
+   Zeroing border-right alone, which is what the sibling needs, leaves the left and top edges
+   still drawn. Rows are what a reader follows across these tables, so only the rules that
+   separate rows survive. The theme's #e9ebec is also a near-white line that its dark mode never
+   revisits; both borders are set in alpha here so they follow whatever they sit on. */
+.main-content table th,
+.main-content table td {
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  vertical-align: top;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-/* Nothing on the page may scroll the page itself sideways. */
-body { overflow-x: hidden; }
-
-/* The measure is tuned for prose; give the data a little more room. */
-@media (min-width: 992px) {
-  .post-container > .col-lg-8,
-  .post-container > .col-md-10 { flex: 0 0 83%; max-width: 83%; }
+/* A cell's own `code` run has to read as part of the cell, not as a second voice inside it. The
+   theme sizes inline code independently, so in a header — 0.7rem, uppercase, muted — a token like
+   `f16/f16` came out half again as large and in the body colour, which is what made these tables
+   look broken: two of the six headings shouting and four whispering. The monospace face is the
+   signal worth keeping; the size, the colour and the chip background are not. */
+.main-content table th code,
+.main-content table td code {
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
 }
 
-/* ---- Masthead height ------------------------------------------------- */
-/* The theme pads the hero 200px top and 150px bottom (200/200 above 768px).
-   At 1440x900 that made the header 726px tall; 30% off is 508, which is the
-   padding below. background-size stays `cover` so the artwork scales into the
-   shorter box without being squashed out of proportion. */
-
-header.masthead .page-heading,
-header.masthead .post-heading,
-header.masthead .site-heading {
-  padding: 91px 0 68px;
+/* An italic run inside a cell is a metric's definition sitting under the answer it belongs to —
+   see "Three numbers, three questions". Smaller and muted so the cell reads as one primary line
+   with a gloss beneath it, which is what lets that table live in two columns instead of three and
+   survive a narrow window. The gloss is prose, not data, so it has to opt back out of the
+   `nowrap` above, or it widens the table past the column and is clipped at the edge. */
+.main-content td em {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.86em;
+  line-height: 1.4;
+  color: var(--muted);
+  white-space: normal;
 }
 
-@media only screen and (min-width: 768px) {
-  header.masthead .page-heading,
-  header.masthead .post-heading,
-  header.masthead .site-heading {
-    padding: 91px 0;
-  }
+/* ---- Code ------------------------------------------------------------
+   The sibling blog leaves _sass/rouge-github.scss alone, on the argument that a code theme is
+   read as code rather than as the site's voice, and that its posts quote mostly untagged blocks
+   where none of it shows. Neither half of that holds here: this blog quotes nineteen blocks in
+   one article, many of them tagged shell and YAML, so the theme's colours are on screen — and
+   measured, they fail the site's own floor in both schemes.
+
+     comments  #999988 on the light block  2.67:1   worst in light mode
+     keywords  #e65100                     3.50:1
+     tag names #000080 on the dark block   1.05:1   effectively invisible
+     plain     #567482 on the light block  4.60:1   passes AA, under the 5.5 here
+
+   Six of seven token colours are under AA in dark mode, because the theme is a light-mode palette
+   that its own dark mode never revisits. Rather than author a second syntax theme, the colour
+   comes out: code is set in the palette's own two greys, with comments the muted one and italic
+   so the one distinction worth keeping survives. Greyscale prose next to greyscale code is also
+   the more honest version of this site. */
+.main-content pre,
+.main-content pre code,
+.main-content code { color: var(--ink); }
+
+/* Rouge's own rules are `.highlight .nt`, so a plain `pre span` loses to them on specificity;
+   `.main-content .highlight span` is one class heavier and wins without an !important. */
+.main-content .highlight span { color: inherit; }
+
+.main-content .highlight .c,
+.main-content .highlight .cd,
+.main-content .highlight .c1,
+.main-content .highlight .cm,
+.main-content .highlight .cp,
+.main-content .highlight .cs {
+  color: var(--muted);
+  font-style: italic;
 }
 
-/* The AI-assistance note in the footer. A light-grey aside: present on every page, small enough
-   that it never competes with the post it follows, and tinted just enough to read as an annotation
-   about the site rather than as content of it. */
+/* ---- Footer ---------------------------------------------------------- */
+.site-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin-top: 3rem;
+  padding-top: 2rem;
+  text-align: center;
+}
+
+.site-footer .social-links {
+  justify-content: center;
+  height: auto;
+  margin: 1.5rem 0;
+}
+
+.site-footer .social-links a { color: var(--muted); }
+.site-footer .social-links a:hover { color: var(--accent); }
+
+/* Present on every page, small enough that it never competes with the post it follows, and tinted
+   just enough to read as an annotation about the site rather than as content of it. */
 .ai-note {
-	max-width: 42rem;
-	margin: 0 auto 2.25rem;
-	padding: 0.85rem;
-	background: #f4f4f5;
-	border: 1px solid #e2e2e5;
-	border-radius: 6px;
-	color: #63656a;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 0.9rem 1.1rem;
+  background: #f4f4f5;
+  border-left: 3px solid #d8dad9;
+  border-radius: 3px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.6;
+  text-align: left;
 }
 
-.ai-note p {
-	font-size: 0.82rem;
-	line-height: 1.55;
-	/* The theme puts 30px above every <p>, which lands inside the box and makes the top padding read
-	   as three times the bottom one. Both ends are the box's own padding now. */
-	margin-top: 0;
-	margin-bottom: 0.6rem;
-	text-align: left;
+.ai-note p { margin: 0 0 0.6rem; }
+.ai-note p:last-child { margin-bottom: 0; }
+
+.copyright {
+  font-size: 0.78rem;
+  color: var(--muted);
 }
 
-.ai-note p:last-child {
-	margin-bottom: 0;
-}
+/* ---- Dark mode ------------------------------------------------------- */
+/* The theme ships one, and it has a hole: headings and links keep their light-mode colour. A
+   greyscale palette makes that worse than it was on the sibling, not better — the graphite
+   accent measures 1.57:1 on #121212, which is invisible rather than merely hard, and the failure
+   is itself invisible to anyone whose system is set to light. They follow the accent token here
+   instead, which the palette block swaps for the light slate in dark mode. */
+@media (prefers-color-scheme: dark) {
+  .main-content h1,
+  .main-content h2,
+  .main-content h3,
+  .main-content h4,
+  .main-content h5,
+  .main-content h6,
+  .main-content a,
+  .post-list a { color: var(--accent); }
 
-.ai-note strong {
-	color: #45474b;
-}
+  .ai-note {
+    background: #1b1e1f;
+    border-left-color: #2a333c;
+    color: var(--muted);
+  }
 
-/* An italic run inside a table cell is a metric's definition sitting under the answer it belongs
-   to — see "Three numbers, three questions". Smaller and muted so the cell reads as one primary
-   line with a gloss beneath it, which is what lets that table live in two columns instead of
-   three and survive a narrow window. */
-td em {
-	display: block;
-	margin-top: 0.2rem;
-	font-size: 0.86em;
-	line-height: 1.4;
-	color: #6c757d;
-	/* Tables above are `white-space: nowrap` so numeric rows stay aligned and scroll rather than
-	   reflow. A gloss is prose, not data: it has to wrap, or it widens the table past the column
-	   and gets clipped at the edge. */
-	white-space: normal;
+  .post-toc { background: rgba(169, 188, 198, 0.08); }
+  .post-toc a { color: var(--ink); }
+  .post-list > li { border-bottom-color: rgba(255, 255, 255, 0.08); }
+  .main-content table th { border-bottom-color: rgba(255, 255, 255, 0.25); }
+  .main-content table td { border-bottom-color: rgba(255, 255, 255, 0.10); }
+  .site-footer .social-links a { color: var(--muted); }
 }

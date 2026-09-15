@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AI Agents Field Notes">
+  <!-- Three ascending bars, the motif already on every title band. The sibling blog's mark is
+       three horizontal rules, a memo; this one is a measurement, which is the difference between
+       the two sites. At 16px nothing survives but silhouette, so there is no trend line and no
+       grid here - only the bars, and the accent on the one the eye should land on.
+       The green is #4f9e8a rather than the artwork's #2E6B5E: that measures 2.87:1 on this
+       ground, which is legible as a 4px line across a 1600px band and mud at 16px. Lifted, it is
+       5.60:1. -->
+  <rect width="64" height="64" rx="12" fill="#14181b"/>
+  <rect x="9"  y="34" width="12" height="13" rx="2" fill="#ffffff"/>
+  <rect x="26" y="27" width="12" height="20" rx="2" fill="#ffffff"/>
+  <rect x="43" y="20" width="12" height="27" rx="2" fill="#4f9e8a"/>
+</svg>

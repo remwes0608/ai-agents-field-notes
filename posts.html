@@ -6,20 +6,32 @@ background: '/img/bg-index.svg'
 permalink: /posts/
 ---
 
-<div class="post-preview-list">
+{%- comment -%}
+Why the list has a paragraph above it: with two articles, the page is otherwise a pair of links
+and no statement of what any of it is for. Kept to what is true of every post rather than of the
+ones published so far — the subject is agents, not the machine the first two happen to run on.
+
+The invitation at the end points at the social icons rather than carrying a link of its own. They
+are already in the bar and repeated in the footer, so a second copy here would be a third place to
+keep a URL correct — and whichever networks those icons come to hold, the sentence stays true.
+{%- endcomment -%}
+<p class="page-intro">Notes from building and running AI agents, for anyone starting out. Most of
+what is here is troubleshooting time I have already spent — the part that usually goes unwritten.
+Plenty of people cover this ground; what I can add is that everything here was measured. Enjoy,
+and do get in touch — the icons in the bar and the footer reach me.</p>
+
+<ul class="post-list">
+  {%- comment -%}
+  Newest first, the same way round as the home page, and the same markup: this page and the home
+  page differ in what surrounds the list, not in the list. `read_time.html` is the theme's own
+  include rather than a second formula, because two estimates of one article disagreeing across
+  two pages is exactly the kind of detail a reader notices.
+  {%- endcomment -%}
   {% for post in site.posts %}
-  <div class="post-preview">
-    <a href="{{ post.url | relative_url }}">
-      <h2 class="post-title">{{ post.title }}</h2>
-      {% if post.subtitle %}<h3 class="post-subtitle">{{ post.subtitle }}</h3>{% endif %}
-    </a>
-    <p class="post-meta">
-      {% comment %} The theme's own include, not a second formula: the home page uses it too, and
-      two estimates of the same article disagreeing is the kind of detail a reader notices.
-      {% endcomment %}
-      {{ post.date | date: "%B %-d, %Y" }} &middot; {% include read_time.html content=post.content %}
-    </p>
-    <hr>
-  </div>
+  <li>
+    <span class="post-meta">{{ post.date | date: "%B %-d, %Y" }} &middot; {% include read_time.html content=post.content %}</span>
+    <h2><a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
+    {% if post.subtitle %}<p class="post-subtitle">{{ post.subtitle | escape }}</p>{% endif %}
+  </li>
   {% endfor %}
-</div>
+</ul>

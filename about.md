@@ -3,6 +3,17 @@ layout: page
 title: About
 description: What the agent is, how the project started, and the machine it runs on.
 background: '/img/bg-about.svg'
+toc: true
+# Two sizes, picked by media query in _includes/head.html: the 480px file for the 152px circle
+# that floats into the text above 64em, the 240px one for the 84px circle inside the contents box
+# below it. The `-sm` name is derived by string replacement, so both files must stay .jpg.
+avatar: '/img/portrait.jpg'
+avatar_alt: "Remigiusz Weska"
+# The front page. Two articles make a thin landing page; what a reader arriving cold actually
+# needs is what the agent is and what it runs on, and the list is one click away at /posts/.
+permalink: /
+# /about/ is indexed and is where both articles point, so it stays reachable as a redirect.
+redirect_from: /about/
 ---
 
 Field notes from running an AI agent on **private hardware and open-weights models**, to

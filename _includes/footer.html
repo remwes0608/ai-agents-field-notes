@@ -1,61 +1,24 @@
-<footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-md-10 mx-auto">
+<footer class="site-footer">
+  {%- comment -%}
+  The AI-assistance note sits here rather than on one page, so it reaches a reader who arrived
+  straight at a post — which is most of them.
+  {%- endcomment -%}
+  <aside class="ai-note">
+    <p><strong>On AI assistance.</strong> These articles are written and edited with AI
+    support, and so is most of the work they describe. What that does not extend to is the
+    substance: the measurements are mine, and every figure, claim and structural decision
+    here I checked myself.</p>
 
-        <!-- Local override of the theme's footer, for one addition: the AI-assistance note. It
-             lives here rather than on the Articles page so it reaches a reader who arrived
-             straight at a post, which is most of them. Everything below the note is the theme's
-             own markup, reproduced so the override does not change the footer's appearance. -->
-        <aside class="ai-note">
-          <p><strong>On AI assistance.</strong> These articles are written and edited with AI
-          support, and so is most of the work they describe. What that does not extend to is the
-          substance: the measurements are mine, and every figure, claim and structural decision
-          here I checked myself.</p>
+    <p>It is deliberate rather than incidental. Producing documentation this way has turned
+    out to be one of the most valuable skills of the past year, and a site about running an
+    agent on your own hardware would be an odd place to hide it.</p>
 
-          <p>It is deliberate rather than incidental. Producing documentation this way has turned
-          out to be one of the most valuable skills of the past year, and a site about running an
-          agent on your own hardware would be an odd place to hide it.</p>
+    <p>Some paragraphs and wordings may read as slop — more redundant, or more elaborately
+    constructed, than you would have written them. That is a choice too: where they give the
+    text a character of its own without changing what it says, I kept them.</p>
+  </aside>
 
-          <p>Some paragraphs and wordings may read as slop — more redundant, or more elaborately
-          constructed, than you would have written them. That is a choice too: where they give the
-          text a character of its own without changing what it says, I kept them.</p>
-        </aside>
+  {% include social-links.html %}
 
-        <ul class="list-inline text-center">
-          {% if site.twitter_username %}
-          <li class="list-inline-item">
-            <a href="https://twitter.com/{{ site.twitter_username }}">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          {% endif %}
-          {% if site.linkedin_username %}
-          <li class="list-inline-item">
-            <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          {% endif %}
-          {% if site.github_username %}
-          <li class="list-inline-item">
-            <a href="https://github.com/{{ site.github_username }}">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          {% endif %}
-        </ul>
-        <p class="copyright text-muted">Copyright &copy; {{ site.author | default: site.title }} {{ 'now' | date: "%Y" }}</p>
-      </div>
-    </div>
-  </div>
+  <p class="copyright">&copy; {{ site.author | default: site.title }} {{ 'now' | date: '%Y' }}</p>
 </footer>

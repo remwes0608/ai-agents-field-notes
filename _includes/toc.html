@@ -1,0 +1,18 @@
+{%- comment -%}
+The list itself is built by assets/js/toc.js from the h2s already on the page, so nothing has to
+be maintained per article. Hidden until the script decides there are enough sections to be worth
+it — a two-item list is furniture, not navigation.
+{%- endcomment -%}
+<nav class="post-toc" id="post-toc" aria-label="On this page" hidden>
+  {%- comment -%}
+  The portrait appears twice in the source and never twice on screen: this copy belongs to narrow
+  screens, where it sits inside the contents box, and the one in the page body belongs to wide
+  ones, where the text wraps around it. Each is a CSS background declared in its own media query,
+  so only the matching one is ever downloaded.
+  {%- endcomment -%}
+  {% if page.avatar %}<div class="author-portrait author-portrait--toc" role="img" aria-label="{{ page.avatar_alt | default: site.author | escape }}"></div>{% endif %}
+  <div class="post-toc-body">
+    <p class="post-toc-title">On this page</p>
+    <ol></ol>
+  </div>
+</nav>

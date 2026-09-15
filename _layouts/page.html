@@ -1,0 +1,24 @@
+---
+layout: default
+---
+{%- comment -%}
+A page opts into the table of contents with `toc: true` in its front matter. About runs long
+enough to need one; the Articles index is a list and would be its own summary.
+{%- endcomment -%}
+{%- capture portrait -%}
+{%- if page.avatar %}<div class="author-portrait author-portrait--inline" role="img" aria-label="{{ page.avatar_alt | default: site.author | escape }}"></div>{% endif -%}
+{%- endcapture -%}
+{% if page.toc %}
+<div class="post-with-toc">
+  {% include toc.html %}
+  <article id="post-body">
+    {{ portrait }}
+    {{ content }}
+  </article>
+</div>
+{% else %}
+<article id="post-body">
+  {{ portrait }}
+  {{ content }}
+</article>
+{% endif %}
